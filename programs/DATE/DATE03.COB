@@ -1,0 +1,11 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DATE03.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  WK-DATA PIC 9(8).
+       01  WK-DATE REDEFINES WK-DATE.
+           03 WK-YEAR PIC 9(4).
+           03 WK-MOUTH PIC 9(2).
+           03 WK-DAY PIC 9(2).
+       
