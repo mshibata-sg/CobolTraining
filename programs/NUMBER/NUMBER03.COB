@@ -1,0 +1,27 @@
+        IDENTIFICATION DIVISION.
+       PROGRAM-ID. NUMBER03.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+           01 INPUT-DATE.
+              03 ITEM-CODE    PIC X(5).
+              03 ITEM-NAME    PIC X(20).
+           
+           01 OUTPUT-DATE.
+              03 ITEM-CODE   PIC X(5).
+              03 ITEM-NAME   PIC X(20).
+
+       PROCEDURE DIVISION.
+           MOVE "2B" TO ITEM-CODE OF INPUT-DATE.
+           MOVE "PENCIL" TO ITEM-NAME OF INPUT-DATE.
+
+           MOVE ITEM-CODE OF INPUT-DATE TO ITEM-CODE OF OUTPUT-DATE.
+           MOVE ITEM-NAME OF INPUT-DATE TO ITEM-NAME OF OUTPUT-DATE.
+
+           DISPLAY ITEM-CODE OF OUTPUT-DATE.
+           DISPLAY ITEM-NAME OF OUTPUT-DATE.
+           STOP RUN.
+           
+
+
+

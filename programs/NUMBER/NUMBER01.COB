@@ -1,0 +1,19 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NUMBER01.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+           01 WK-EMP-NO    PIC 9(6).
+           01 WK-EMP-NAME  PIC X(20).
+           01 WK-EMP-DEPT   PIC X(10).
+
+       PROCEDURE DIVISION.
+           MOVE 123 TO WK-EMP-NO.
+           MOVE "SUZUKI" TO WK-EMP-NAME.
+           MOVE "SALES" TO WK-EMP-DEPT.
+
+           DISPLAY WK-EMP-NO.
+           DISPLAY WK-EMP-NAME.
+           DISPLAY WK-EMP-DEPT.
+
+           STOP RUN.

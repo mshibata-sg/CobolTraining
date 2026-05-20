@@ -1,0 +1,21 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NUMBER02.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+           01 WK-PRICE PIC 9(4) VALUE 1500.
+           01 WK-QTY   PIC 9(2) VALUE 25.
+           01 WK-SMOLTOTAL PIC 9(10).
+           01 WK-TAX   PIC 9(10).
+           01 WK-TOTAL PIC 9(10).
+
+       PROCEDURE DIVISION.
+           COMPUTE WK-SMOLTOTAL = WK-PRICE * WK-QTY.
+           COMPUTE WK-TAX = WK-SMOLTOTAL * 0.10.
+           COMPUTE WK-TOTAL = WK-SMOLTOTAL + WK-TAX.
+
+           DISPLAY WK-SMOLTOTAL.
+           DISPLAY WK-TAX.
+           DISPLAY WK-TOTAL.
+           STOP RUN.
+
