@@ -7,8 +7,7 @@ PROGRAMNAME=$(basename "${SCRIPTDIR}")
 BINDIR="${SCRIPTDIR}"
 PROGRAM="${BINDIR}/${PROGRAMNAME}"
 
-export ITF="<INPUT DATA PATH>"
-export MTF="<MASTER DATA PATH>"
-export OTF="<OUTPUT DATA PATH>"
+export ITF="${SCRIPTDIR}/../../data/TEMPLATE_I.dat"
+export OTF="${SCRIPTDIR}/../../data/TEMPLATE_O.dat"
 
 ${PROGRAM} | iconv -f cp932

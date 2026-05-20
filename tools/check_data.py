@@ -10,28 +10,30 @@ FF_フォーマット定義に基づくデータファイルチェックスク�
 
 import sys
 import argparse
+from collections.abc import Callable
 from pathlib import Path
-
+from typing import Literal, TypedDict
 
 # 0x3 Unix/Windows(ASCII)
 # 0x7 Unix/Windows(ASCII) 最終バイト符号：負
 # 0xF Mainframe(EBCDIC)
 # 0xC Mainframe(EBCDIC) 最終バイト符号：正
 # 0xD Mainframe(EBCDIC) 最終バイト符号：負
-POSITIVE_ZONES: tuple[int] = (0x3, 0xC, 0xF)
-NEGATIVE_ZONES: tuple[int] = (0x7, 0xD)
-ZONES: tuple[int] = POSITIVE_ZONES + NEGATIVE_ZONES
+POSITIVE_ZONES: tuple[int, ...] = (0x3, 0xC, 0xF)
+NEGATIVE_ZONES: tuple[int, ...] = (0x7, 0xD)
+ZONES: tuple[int, ...] = POSITIVE_ZONES + NEGATIVE_ZONES
 
 # 0xC 最終バイト符号：正
 # 0xD 最終バイト符号：負
 # 0xF 最終バイト符号：符号なし
-POSITIVE_PACKED_SIGN: tuple[int] = (0xC, 0xF)
-NEGATIVE_PACKED_SIGN: tuple[int] = (0xD, )
-PACKED_SIGN: tuple[int] = POSITIVE_PACKED_SIGN + NEGATIVE_PACKED_SIGN
+POSITIVE_PACKED_SIGN: tuple[int, ...] = (0xC, 0xF)
+NEGATIVE_PACKED_SIGN: tuple[int, ...] = (0xD,)
+PACKED_SIGN: tuple[int, ...] = POSITIVE_PACKED_SIGN + NEGATIVE_PACKED_SIGN
 
 # ============================================================
 # デコード関数
 # ============================================================
+
 
 def decode_zone(data: bytes) -> int:
     """ゾーン10進数 (PIC 9) をデコード"""
@@ -73,10 +75,10 @@ def format_with_decimal(value: int, decimal_places: int) -> str:
     """整数値に小数点を挿入してフォーマット"""
     if decimal_places == 0:
         return str(value)
-    sign = '-' if value < 0 else ''
+    sign = "-" if value < 0 else ""
     abs_val = abs(value)
     digits = str(abs_val).zfill(decimal_places + 1)
-    int_part = digits[:-decimal_places].lstrip('0') or '0'
+    int_part = digits[:-decimal_places].lstrip("0") or "0"
     dec_part = digits[-decimal_places:]
     return f"{sign}{int_part}.{dec_part}"
 
@@ -84,7 +86,7 @@ def format_with_decimal(value: int, decimal_places: int) -> str:
 def decode_sjis(data: bytes) -> str:
     """Shift-JIS文字列をデコード"""
     try:
-        return data.decode('cp932').rstrip()
+        return data.decode("cp932").rstrip()
     except Exception:
         return f"<デコードエラー: {data.hex()}>"
 
@@ -126,12 +128,13 @@ def fmt_packed(data: bytes, decimal_places: int = 0) -> str:
 # バリデーション関数
 # ============================================================
 
+
 def validate_zone(data: bytes, field_name: str) -> list:
     """ゾーン数値のバリデーション (各バイトの下位バイトが 0-9 であること)"""
     errors = []
     for i, b in enumerate(data):
         digit = b & 0x0F
-        zone  = (b >> 4) & 0x0F
+        zone = (b >> 4) & 0x0F
         if digit > 9:
             errors.append(f"{field_name}: [{i}]バイト 数値データ不正 (0x{digit:X})")
         # 正常なゾーン: 0x3(ASCII), 0xC(正符号), 0xD(負符号), 0xF(EBCDIC符号なし)
@@ -150,7 +153,7 @@ def validate_packed(data: bytes, field_name: str) -> list:
         if lo > 9:
             errors.append(f"{field_name}: [{i}]バイト 下位バイト不正 (0x{lo:X})")
     last = data[-1]
-    h    = (last >> 4) & 0x0F
+    h = (last >> 4) & 0x0F
     sign = last & 0x0F
     if h > 9:
         errors.append(f"{field_name}: 最終バイト 数値データ不正 (0x{h:X})")
@@ -165,6 +168,7 @@ def validate_packed(data: bytes, field_name: str) -> list:
 # ============================================================
 # 各フォーマット レコード解析関数
 # ============================================================
+
 
 def check_kjcf010(record: bytes, rec_no: int) -> bool:
     """
@@ -190,9 +194,11 @@ def check_kjcf010(record: bytes, rec_no: int) -> bool:
 
     # データ区分
     data_kbn = chr(record[0])
-    print(f"  データ区分 (JF010-DATA-KBN) : '{data_kbn}'"
-          f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})")
-    if data_kbn not in ('1', '9'):
+    print(
+        f"  データ区分 (JF010-DATA-KBN) : '{data_kbn}'"
+        f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})"
+    )
+    if data_kbn not in ("1", "9"):
         errors.append(f"データ区分 不正値: '{data_kbn}' (期待値: 1=売上, 9=取消)")
 
     # 受注番号
@@ -200,12 +206,14 @@ def check_kjcf010(record: bytes, rec_no: int) -> bool:
     print(f"  受注番号   (JF010-JUCHU-NO) : {fmt_zone(record[2:6])}")
 
     # 受注日付
-    errors.extend(validate_zone(record[7:9],   "受注日付(年)"))
-    errors.extend(validate_zone(record[9:11],  "受注日付(月)"))
+    errors.extend(validate_zone(record[7:9], "受注日付(年)"))
+    errors.extend(validate_zone(record[9:11], "受注日付(月)"))
     errors.extend(validate_zone(record[11:13], "受注日付(日)"))
     mm = decode_zone(record[9:11])
     dd = decode_zone(record[11:13])
-    print(f"  受注日付   (JF010-JUCHU-DATE): 20{fmt_zone(record[7:9])}/{fmt_zone(record[9:11])}/{fmt_zone(record[11:13])}")
+    print(
+        f"  受注日付   (JF010-JUCHU-DATE): 20{fmt_zone(record[7:9])}/{fmt_zone(record[9:11])}/{fmt_zone(record[11:13])}"
+    )
     if not (1 <= mm <= 12):
         errors.append(f"受注日付(月) 範囲外: {mm}")
     if not (1 <= dd <= 31):
@@ -249,9 +257,11 @@ def check_kjcf020(record: bytes, rec_no: int) -> bool:
 
     # データ区分
     data_kbn = chr(record[0])
-    print(f"  データ区分      (JF020-DATA-KBN)  : '{data_kbn}'"
-          f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})")
-    if data_kbn not in ('1', '9'):
+    print(
+        f"  データ区分      (JF020-DATA-KBN)  : '{data_kbn}'"
+        f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})"
+    )
+    if data_kbn not in ("1", "9"):
         errors.append(f"データ区分 不正値: '{data_kbn}' (期待値: 1=売上, 9=取消)")
 
     # 受注番号
@@ -259,13 +269,15 @@ def check_kjcf020(record: bytes, rec_no: int) -> bool:
     print(f"  受注番号        (JF020-JUCHU-NO)  : {fmt_zone(record[1:5])}")
 
     # 受注日付
-    errors.extend(validate_zone(record[5:7],   "受注日付(年上2桁)"))
-    errors.extend(validate_zone(record[7:9],   "受注日付(年下2桁)"))
-    errors.extend(validate_zone(record[9:11],  "受注日付(月)"))
+    errors.extend(validate_zone(record[5:7], "受注日付(年上2桁)"))
+    errors.extend(validate_zone(record[7:9], "受注日付(年下2桁)"))
+    errors.extend(validate_zone(record[9:11], "受注日付(月)"))
     errors.extend(validate_zone(record[11:13], "受注日付(日)"))
     mm = decode_zone(record[9:11])
     dd = decode_zone(record[11:13])
-    print(f"  受注日付        (JF020-JUCHU-DATE): {fmt_zone(record[5:7])}{fmt_zone(record[7:9])}/{fmt_zone(record[9:11])}/{fmt_zone(record[11:13])}")
+    print(
+        f"  受注日付        (JF020-JUCHU-DATE): {fmt_zone(record[5:7])}{fmt_zone(record[7:9])}/{fmt_zone(record[9:11])}/{fmt_zone(record[11:13])}"
+    )
     if not (1 <= mm <= 12):
         errors.append(f"受注日付(月) 範囲外: {mm}")
     if not (1 <= dd <= 31):
@@ -281,16 +293,24 @@ def check_kjcf020(record: bytes, rec_no: int) -> bool:
 
     # エラー区分テーブル
     ERR_NAMES = [
-        "データ区分", "受注番号", "受注日付", "予備(4)",
-        "商品番号", "数量", "予備(7)", "予備(8)", "予備(9)", "予備(10)",
+        "データ区分",
+        "受注番号",
+        "受注日付",
+        "予備(4)",
+        "商品番号",
+        "数量",
+        "予備(7)",
+        "予備(8)",
+        "予備(9)",
+        "予備(10)",
     ]
-    ERR_LABELS = {' ': 'エラーなし', '1': '形式エラー', '2': 'マスタなし'}
+    ERR_LABELS = {" ": "エラーなし", "1": "形式エラー", "2": "マスタなし"}
     print("  エラー区分TBL   (JF020-ERR-KBN-TBL):")
     for i in range(10):
-        kbn  = chr(record[26 + i])
+        kbn = chr(record[26 + i])
         label = ERR_LABELS.get(kbn, f"不明('{kbn}')")
         print(f"    [{i+1:2d}] {ERR_NAMES[i]:12s}: '{kbn}' ({label})")
-        if kbn not in (' ', '1', '2'):
+        if kbn not in (" ", "1", "2"):
             errors.append(f"エラー区分({i+1}) 不正値: '{kbn}'")
 
     # 商品名
@@ -332,9 +352,11 @@ def check_kucf010(record: bytes, rec_no: int) -> bool:
 
     # データ区分
     data_kbn = chr(record[0])
-    print(f"  データ区分  (UF010-DATA-KBN)  : '{data_kbn}'"
-          f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})")
-    if data_kbn not in ('1', '9'):
+    print(
+        f"  データ区分  (UF010-DATA-KBN)  : '{data_kbn}'"
+        f"  ({'売上' if data_kbn == '1' else '取消' if data_kbn == '9' else '不明'})"
+    )
+    if data_kbn not in ("1", "9"):
         errors.append(f"データ区分 不正値: '{data_kbn}' (期待値: 1=売上, 9=取消)")
 
     # 受注日付
@@ -343,7 +365,9 @@ def check_kucf010(record: bytes, rec_no: int) -> bool:
     errors.extend(validate_zone(record[7:9], "受注日付(日)"))
     mm = decode_zone(record[5:7])
     dd = decode_zone(record[7:9])
-    print(f"  受注日付    (UF010-JUCHU-DATE): {fmt_zone(record[1:5])}/{fmt_zone(record[5:7])}/{fmt_zone(record[7:9])}")
+    print(
+        f"  受注日付    (UF010-JUCHU-DATE): {fmt_zone(record[1:5])}/{fmt_zone(record[5:7])}/{fmt_zone(record[7:9])}"
+    )
     if not (1 <= mm <= 12):
         errors.append(f"受注日付(月) 範囲外: {mm}")
     if not (1 <= dd <= 31):
@@ -396,10 +420,12 @@ def check_kucf020(record: bytes, rec_no: int) -> bool:
     print(f"  商品番号  (UF020-SHOHIN-NO)  : {fmt_zone(record[0:5])}")
 
     # 受注年月
-    errors.extend(validate_zone(record[5:9],  "受注年月(年)"))
+    errors.extend(validate_zone(record[5:9], "受注年月(年)"))
     errors.extend(validate_zone(record[9:11], "受注年月(月)"))
     mm = decode_zone(record[9:11])
-    print(f"  受注年月  (UF020-JUCHU-DATE) : {fmt_zone(record[5:9])}/{fmt_zone(record[9:11])}")
+    print(
+        f"  受注年月  (UF020-JUCHU-DATE) : {fmt_zone(record[5:9])}/{fmt_zone(record[9:11])}"
+    )
     if not (1 <= mm <= 12):
         errors.append(f"受注年月(月) 範囲外: {mm}")
 
@@ -468,36 +494,43 @@ def _print_result(errors: list):
 # フォーマット設定
 # ============================================================
 
-FORMAT_CONFIG = {
-    'KJCF010': {
-        'name':       '受注データ',
-        'file_type':  'line_sequential',  # 行順編成: 改行区切りテキスト
-        'record_len': 50,
-        'func':       check_kjcf010,
+class FormatConfig(TypedDict):
+    name: str
+    file_type: Literal["line_sequential", "sequential"]
+    record_len: int
+    func: Callable[[bytes, int], bool]
+
+
+FORMAT_CONFIG: dict[str, FormatConfig] = {
+    "KJCF010": {
+        "name": "受注データ",
+        "file_type": "line_sequential",  # 行順編成: 改行区切りテキスト
+        "record_len": 50,
+        "func": check_kjcf010,
     },
-    'KJCF020': {
-        'name':       '受注チェックファイル',
-        'file_type':  'sequential',       # 順編成: バイナリ固定長
-        'record_len': 100,
-        'func':       check_kjcf020,
+    "KJCF020": {
+        "name": "受注チェックファイル",
+        "file_type": "sequential",  # 順編成: バイナリ固定長
+        "record_len": 100,
+        "func": check_kjcf020,
     },
-    'KUCF010': {
-        'name':       '売上ファイル',
-        'file_type':  'sequential',
-        'record_len': 100,
-        'func':       check_kucf010,
+    "KUCF010": {
+        "name": "売上ファイル",
+        "file_type": "sequential",
+        "record_len": 100,
+        "func": check_kucf010,
     },
-    'KUCF020': {
-        'name':       '売上集計ファイル',
-        'file_type':  'sequential',
-        'record_len': 30,
-        'func':       check_kucf020,
+    "KUCF020": {
+        "name": "売上集計ファイル",
+        "file_type": "sequential",
+        "record_len": 30,
+        "func": check_kucf020,
     },
-    'KCCFSHO': {
-        'name':       '商品マスタSAMファイル',
-        'file_type':  'sequential',
-        'record_len': 50,
-        'func':       check_kccfsho,
+    "KCCFSHO": {
+        "name": "商品マスタSAMファイル",
+        "file_type": "sequential",
+        "record_len": 50,
+        "func": check_kccfsho,
     },
 }
 
@@ -506,12 +539,15 @@ FORMAT_CONFIG = {
 # ファイルチェック
 # ============================================================
 
+
 def check_file(fmt_id: str, file_path: Path):
     cfg = FORMAT_CONFIG[fmt_id]
 
     print(f"{'=' * 64}")
     print(f" フォーマット : {fmt_id}  ({cfg['name']})")
-    print(f" ファイル種別 : {'行順編成 (LINE SEQUENTIAL)' if cfg['file_type'] == 'line_sequential' else '順編成 (SEQUENTIAL, 固定長バイナリ)'}")
+    print(
+        f" ファイル種別 : {'行順編成 (LINE SEQUENTIAL)' if cfg['file_type'] == 'line_sequential' else '順編成 (SEQUENTIAL, 固定長バイナリ)'}"
+    )
     print(f" レコード長   : {cfg['record_len']} バイト")
     print(f" ファイル     : {file_path}")
     print(f"{'=' * 64}")
@@ -525,29 +561,31 @@ def check_file(fmt_id: str, file_path: Path):
 
     ok_count = 0
     ng_count = 0
-    rec_no   = 0
+    rec_no = 0
 
-    if cfg['file_type'] == 'line_sequential':
+    if cfg["file_type"] == "line_sequential":
         # 行順編成: Shift-JIS テキスト、改行で区切られた固定長レコード
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             for raw_line in f:
-                line = raw_line.rstrip(b'\r\n')
+                line = raw_line.rstrip(b"\r\n")
                 if len(line) == 0:
                     continue
                 rec_no += 1
-                if len(line) != cfg['record_len']:
+                if len(line) != cfg["record_len"]:
                     print(f"\n--- レコード {rec_no:04d} ---")
-                    print(f"  [NG] レコード長不一致: {len(line)} バイト (期待値: {cfg['record_len']} バイト)")
+                    print(
+                        f"  [NG] レコード長不一致: {len(line)} バイト (期待値: {cfg['record_len']} バイト)"
+                    )
                     ng_count += 1
                     continue
-                if cfg['func'](line, rec_no):
+                if cfg["func"](line, rec_no):
                     ok_count += 1
                 else:
                     ng_count += 1
     else:
         # 順編成: バイナリ固定長レコード
-        rec_len = cfg['record_len']
-        with open(file_path, 'rb') as f:
+        rec_len = cfg["record_len"]
+        with open(file_path, "rb") as f:
             while True:
                 record = f.read(rec_len)
                 if not record:
@@ -555,10 +593,12 @@ def check_file(fmt_id: str, file_path: Path):
                 rec_no += 1
                 if len(record) != rec_len:
                     print(f"\n--- レコード {rec_no:04d} ---")
-                    print(f"  [NG] 不完全レコード: {len(record)} バイト (期待値: {rec_len} バイト)")
+                    print(
+                        f"  [NG] 不完全レコード: {len(record)} バイト (期待値: {rec_len} バイト)"
+                    )
                     ng_count += 1
                     break
-                if cfg['func'](record, rec_no):
+                if cfg["func"](record, rec_no):
                     ok_count += 1
                 else:
                     ng_count += 1
@@ -579,9 +619,10 @@ def check_file(fmt_id: str, file_path: Path):
 # エントリポイント
 # ============================================================
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description='FF_フォーマット定義に基づくデータファイルチェック',
+        description="FF_フォーマット定義に基づくデータファイルチェック",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 利用可能なフォーマットID:
@@ -597,17 +638,17 @@ def main():
         """,
     )
     parser.add_argument(
-        'format_id',
+        "format_id",
         choices=FORMAT_CONFIG.keys(),
-        metavar='format_id',
+        metavar="format_id",
         help=f'フォーマットID: {", ".join(FORMAT_CONFIG.keys())}',
     )
-    parser.add_argument('data_file', help='チェック対象ファイルパス')
+    parser.add_argument("data_file", help="チェック対象ファイルパス")
     args = parser.parse_args()
 
     ok = check_file(args.format_id, Path(args.data_file))
     sys.exit(0 if ok else 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

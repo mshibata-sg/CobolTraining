@@ -1,0 +1,25 @@
+nav:
+    - '表紙': index.md
+    - 'ライセンス': license..md
+    - '実習ルール': RULES.md
+    - 'ジョブフロー': FLOW_KJJD010.md
+    - 'ファイルフォーマット':
+        - 'KJCF010 - 受注データ': FF_KJCF010.md
+        - 'KJCF020 - 受注チェックファイル': FF_KJCF020.md
+        - 'KUCF010 - 売上ファイル': FF_KUCF010.md
+        - 'KUCF020 - 売上集計ファイル': FF_KUCF020.md
+        - 'KCCFSHO - 商品マスタSAMファイル': FF_KCCFSHO.md
+    - 'プログラム仕様書':
+        - 'KJBM010 - 受注チェックファイル作成': PRG_KJBM010.md
+        - 'KJBM020 - 受注データ形式チェック': PRG_KJBM020.md
+        - 'KJBM030 - 受注データ商品番号チェック': PRG_KJBM030.md
+        - 'KJBM050 - 受注データ振り分け': PRG_KJBM050.md
+        - 'KUBM010 - 売上ファイル作成': PRG_KUBM010.md
+        - 'KUBM020 - 売上集計': PRG_KUBM020.md
+        - 'KUBM030 - 売上更新': PRG_KUBM030.md
+    - 'サブプログラム':
+        - 'KCBS010 - 日付チェック': SUB_KCBS010.md
+    - 'ユーティリティ':
+        - 'GCSORT - ソートユーティリティ': UTIL_GCSORT.md
+    - 'テーブル定義':
+        - 'KCCMURIAGE - 売上マスタ': TBL_KCCMURIAGE.md

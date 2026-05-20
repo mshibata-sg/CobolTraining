@@ -15,14 +15,19 @@ COBOLコピーブックをパースし、データ項目の一覧を出力する
 import sys
 import re
 import argparse
+import subprocess
 
 
 def read_copybook(path: str) -> str:
     """コピーブックを読み込む (Shift-JIS → UTF-8変換を試みる)"""
     try:
-        with open(path, encoding="cp932") as f:
-            return f.read()
-    except UnicodeDecodeError:
+        result = subprocess.run(
+            ["iconv", "-f", "cp932", "-t", "utf8", path],
+            capture_output=True,
+            check=True,
+        )
+        return result.stdout.decode("utf-8")
+    except (subprocess.CalledProcessError, FileNotFoundError):
         with open(path, encoding="utf-8") as f:
             return f.read()
 
@@ -327,12 +332,8 @@ def _assign_positions(items: list[dict]):
     # 現在位置
     pos = 1
 
-    # レベル階層のスタック: [(level, end_pos_after)]
-    level_stack = []
-
     for i in range(n):
         item = items[i]
-        level = item["level"]
 
         # REDEFINES: 対象項目の開始位置を使う
         if item["redefines"]:

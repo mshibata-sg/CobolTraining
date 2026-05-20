@@ -6,6 +6,7 @@ BINDIR="${SCRIPTDIR}"
 COPYLIBDIR="${SCRIPTDIR}/../../copylib"
 DIRNAME=$(basename "${SCRIPTDIR}")
 
+# ƒRƒ“ƒpƒCƒ‹
 SRCFILE="${DIRNAME}.COB"
 BINFILE=$(basename -s .COB $SRCFILE)
 

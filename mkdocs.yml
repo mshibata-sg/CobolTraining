@@ -1,0 +1,37 @@
+site_name: COBOL実習ドキュメント
+copyright: Copyright &copy; 2026 システム技研株式会社
+theme:
+    name: material
+    language: ja
+    font:
+        text: Noto Sans JP
+        code: Consolas
+    features:
+        - toc.integrate
+        - navigation.expand
+        - navigation.footer
+        - navigation.instant
+        - navigation.sections
+        - content.code.copy
+        - search.hightlight
+plugins:
+  - awesome-nav
+  - search:
+      lang: ja
+  - git-revision-date-localized:
+      enabled: true
+      enable_creation_date: true
+  - print-site
+markdown_extensions:
+    - meta
+    - toc:
+        toc_depth: 2
+    - admonition
+    - pymdownx.highlight:
+        anchor_linenums: true
+        pygments_lang_class: true
+    - pymdownx.superfences:
+        custom_fences:
+            - name: mermaid
+              class: mermaid
+              format: !!python/name:pymdownx.superfences.fence_code_format

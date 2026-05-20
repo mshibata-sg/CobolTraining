@@ -8,12 +8,15 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"bitlang.cobol"
+        "bitlang.cobol",
+        "bierner.markdown-mermaid"
 			]
 		}
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/node:1": {}
+	  "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/python:1": { "version": "latest", "installTools": false },
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
 	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -22,7 +25,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [5432],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": ""
+	"postCreateCommand": "bash .devcontainer/setup-aiagent.sh"
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
