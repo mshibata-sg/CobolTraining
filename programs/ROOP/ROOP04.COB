@@ -20,16 +20,19 @@
            MOVE 90 TO NUMBER-DATA(9).
            MOVE 24 TO NUMBER-DATA(10).
 
-           MOVE NUMBER-DATA(1) TO WK-MAX.
+           MOVE NUMBER-DATA(1) TO WK-MAX.     
 
            PERFORM VARYING WK-IDX FROM 1 BY 1
                   UNTIL WK-IDX > 10
 
-              IF WK-MAX < NUMBER-DATA(WK-IDX)
-                 MOVE NUMBER-DATA(WK-IDX) TO WK-MAX 
+              IF WK-MAX <= NUMBER-DATA(WK-IDX)
+                 NUMBER-DATA(WK-IDX) TO WK-MAX
               END-IF
+
            END-PERFORM.
 
            DISPLAY WK-MAX
 
            STOP RUN.
+
+           
