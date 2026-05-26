@@ -34,7 +34,6 @@
            PERFORM UNTIL WK-EOF = "Y"
                MOVE ITF-REC TO OTF-REC
                WRITE OTF-REC
-               DISPLAY OTF-REC
                
                READ ITF-FILE
                    AT END MOVE "Y" TO WK-EOF
