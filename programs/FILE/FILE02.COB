@@ -20,7 +20,6 @@
 
        WORKING-STORAGE SECTION.
        01  WK-EOF         PIC X(1) VALUE "N".
-       01  WK-COUNT       PIC 9(4) VALUE 0.
 
        PROCEDURE DIVISION.
        
@@ -35,13 +34,12 @@
            PERFORM UNTIL WK-EOF = "Y"
                MOVE ITF-REC TO OTF-REC
                WRITE OTF-REC
-               ADD 1 TO WK-COUNT
+               DISPLAY OTF-REC
+               
                READ ITF-FILE
                    AT END MOVE "Y" TO WK-EOF
                END-READ
            END-PERFORM.
-
-           DISPLAY "COUNT" WK-COUNT.
 
            CLOSE ITF-FILE.
            CLOSE OTF-FILE.
