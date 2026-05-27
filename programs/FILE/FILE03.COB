@@ -22,15 +22,13 @@
 
        PROCEDURE DIVISION.
            OPEN INPUT ITF-FILE.
-    
+
            READ ITF-FILE
-           AT END                                              
-           MOVE "Y" TO WK-EOF
+           AT END MOVE "Y" TO WK-EOF
            END-READ.
     
            PERFORM UNTIL WK-EOF = "Y"
                ADD 1 TO WK-COUNTER
-                
                READ ITF-FILE
                    AT END MOVE "Y" TO WK-EOF
                END-READ
