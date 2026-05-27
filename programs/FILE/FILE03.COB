@@ -29,14 +29,14 @@
            END-READ.
     
            PERFORM UNTIL WK-EOF = "Y"
-                ADD 1 TO WK-COUNTER
+               ADD 1 TO WK-COUNTER
                 
-                READ ITF-FILE
-                     AT END MOVE "Y" TO WK-EOF
-                END-READ
-              END-PERFORM.  
-              DISPLAY "TOTAL RECORDS:" WK-COUNTER.
+               READ ITF-FILE
+                   AT END MOVE "Y" TO WK-EOF
+               END-READ
+           END-PERFORM.  
+           DISPLAY "TOTAL RECORDS:" WK-COUNTER.
     
-              CLOSE ITF-FILE.
-              STOP RUN.
+           CLOSE ITF-FILE.
+           STOP RUN.
                
