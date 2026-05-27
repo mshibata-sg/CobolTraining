@@ -7,11 +7,9 @@
            SELECT ITF-FILE ASSIGN TO ITF
            ORGANIZATION SEQUENTIAL.
 
-           SELECT OTF-FILE ASSIGN TO OTF
-           ORGANIZATION SEQUENTIAL.
 
        DATA DIVISION.
-       FILE SECTION
+       FILE SECTION.
        FD  ITF-FILE.
        01  ITF-REC.
            03 EMP-CODE                 PIC X(5).
@@ -37,7 +35,7 @@
                      AT END MOVE "Y" TO WK-EOF
                 END-READ
               END-PERFORM.  
-              DISPLAY "TOTAL RECORDS" WK-COUNTER.
+              DISPLAY "TOTAL RECORDS:" WK-COUNTER.
     
               CLOSE ITF-FILE.
               STOP RUN.
