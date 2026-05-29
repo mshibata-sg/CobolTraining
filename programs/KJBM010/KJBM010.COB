@@ -31,7 +31,9 @@
 
        WORKING-STORAGE SECTION.
        01  KJCF010-EOF         PIC X(1) VALUE "N".
-       
+       01  IN-CNT   PIC 9(9) VALUE 0.
+       01  OUT-CNT  PIC 9(9) VALUE 0.
+
        PROCEDURE DIVISION.
       ******************************************************************
       * èâä˙èàóù
@@ -44,7 +46,9 @@
       ******************************************************************
            READ ITF-FILE
              AT END
-               MOVE "Y" TO KJCF010-EOF
+             MOVE "Y" TO KJCF010-EOF
+             NOT AT END 
+             ADD 1 TO IN-CNT
              END-READ. 
               
            PERFORM UNTIL KJCF010-EOF = "Y"
@@ -54,19 +58,26 @@
              MOVE JF010-JUCHU-NO-X TO JF020-JUCHU-NO-X 
              MOVE ZERO TO JF020-JUCHU-Y1
              MOVE JF010-JUCHU-DATE TO JF020-JUCHU-DATE6	
-             MOVE JF010-SHOHIN-NO TO JF020-SHOHIN-NO-X
+             MOVE JF010-JUCHU-NO-X TO JF020-JUCHU-NO-X
              MOVE JF010-SURYO-X TO JF020-SURYO-X
              MOVE SPACES TO JF020-ERR-KBN-TBL
              MOVE SPACES TO JF020-SHOHIN-MEI
              MOVE ZERO TO JF020-TANKA
              MOVE ZERO TO JF020-KINGAKU
-               WRITE OTF-REC
+             
+             WRITE OTF-REC
+             ADD 1 TO OUT-CNT
 
            READ ITF-FILE
              AT END 
-               MOVE "Y" TO KJCF010-EOF
+             MOVE "Y" TO KJCF010-EOF
              END-READ
            END-PERFORM.
+
+           DISPLAY "*** KJBM010 START ***"
+           DISPLAY "ITF-CNT:" IN-CNT
+           DISPLAY "OTF-CNT:" OUT-CNT
+           DISPLAY "*** KJBM010 END ***"
              
       ******************************************************************
       * èIóπèàóù
