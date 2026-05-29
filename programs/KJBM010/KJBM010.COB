@@ -31,8 +31,8 @@
 
        WORKING-STORAGE SECTION.
        01  KJCF010-EOF         PIC X(1) VALUE "N".
-       01  IN-CNT   PIC 9(9) VALUE 0.
-       01  OUT-CNT  PIC 9(9) VALUE 0.
+       01  IN-CNT              PIC 9(9) VALUE 0.
+       01  OUT-CNT             PIC 9(9) VALUE 0.
 
        PROCEDURE DIVISION.
       ******************************************************************
@@ -71,6 +71,8 @@
            READ ITF-FILE
              AT END 
              MOVE "Y" TO KJCF010-EOF
+             NOT AT END 
+             ADD 1 TO IN-CNT
              END-READ
            END-PERFORM.
 
