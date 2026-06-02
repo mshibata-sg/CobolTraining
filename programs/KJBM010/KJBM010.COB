@@ -31,8 +31,8 @@
 
        WORKING-STORAGE SECTION.
        01  KJCF010-EOF         PIC X(1) VALUE "N".
-       01  IN-CNT              PIC 9(9) VALUE 0.
-       01  OUT-CNT             PIC 9(9) VALUE 0.
+       01  IN-CNT              PIC 9(20) VALUE 0.
+       01  OUT-CNT             PIC 9(20) VALUE 0.
 
        PROCEDURE DIVISION.
       ******************************************************************
@@ -56,8 +56,8 @@
 
              MOVE JF010-DATA-KBN TO JF020-DATA-KBN
              MOVE JF010-JUCHU-NO-X TO JF020-JUCHU-NO-X 
-             MOVE ZERO TO JF020-JUCHU-Y1
-             MOVE JF010-JUCHU-DATE TO JF020-JUCHU-DATE6	
+             MOVE ZERO TO JF020-JUCHU-Y1            
+             MOVE JF010-JUCHU-DATE TO JF020-JUCHU-DATE6
              MOVE JF010-SHOHIN-NO TO JF020-SHOHIN-NO
              MOVE JF010-SURYO-X TO JF020-SURYO-X
              MOVE SPACES TO JF020-ERR-KBN-TBL
