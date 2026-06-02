@@ -22,5 +22,6 @@
     ],
     "editor.fontFamily": "\"UDEV Gothic NF\", \"MS Gothic\"",
     "editor.fontSize": 16,
-    "terminal.integrated.fontSize": 16
+    "terminal.integrated.fontSize": 16,
+    "remote.autoForwardPortsFallback": 0
 }
