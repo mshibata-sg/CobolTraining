@@ -5,7 +5,7 @@
       * システム名　　：研修(ID:K)
       * サブシステム名：受注(ID:JK)
       * プログラム名　：受注データ形式チェック
-      * 作成日／作成者：2026/06/　[柴田真衣]
+      * 作成日／作成者：2026/06/0　[柴田真衣]
       * 変更日／変更者：
       * 　　　変更内容：
       ******************************************************************
@@ -31,10 +31,10 @@
            COPY KJCF020.  
            
        WORKING-STORAGE SECTION.
-       01  KJCF010-EOF         PIC X(1) VALUE "N".
+       01  KJCF020-EOF         PIC X(1) VALUE "N".
        01  IN-CNT              PIC 9(9) VALUE 0.
        01  OUT-CNT             PIC 9(9) VALUE 0.
-       01  COPY KCBS010.
+           COPY KCBS010P.
 
        PROCEDURE DIVISION.
       ******************************************************************
@@ -48,51 +48,60 @@
       ******************************************************************
            READ ITF-FILE
              AT END
-             MOVE "Y" TO KJCF010-EOF
+                MOVE "Y" TO KJCF020-EOF
              NOT AT END 
-             ADD 1 TO IN-CNT
-             END-READ. 
+                ADD 1 TO IN-CNT
+             END-READ
 
-           PERFORM UNTIL KJCF010-EOF = "Y"
-             MOVE SPACES TO JF020-ERR-KBN-TBL
+           PERFORM UNTIL KJCF020-EOF = "Y"
+             MOVE SPACES TO JF020-ERR-KBN-TBL OF ITF-REC
     
-             IF JF020-DATA-KBN = 1 OR JF020-DATA-KBN = 9
+             IF (JF020-DATA-KBN OF ITF-REC = 1) OR 
+                (JF020-DATA-KBN OF ITF-REC = 9)
                 CONTINUE
              ELSE
-                MOVE 1 TO JF020-ERR-KBN(1)
-             END-IF.
-             IF JF020-JUCHU-NO IS NUMERIC AND JF020-JUCHU-NO NOT = ZERO
+                MOVE 1 TO JF020-ERR-KBN OF ITF-REC(1)
+             END-IF
+
+             IF JF020-JUCHU-NO OF ITF-REC IS NUMERIC AND 
+                JF020-JUCHU-NO OF ITF-REC NOT = 0
                 CONTINUE
              ELSE
-                MOVE 1 TO JF020-ERR-KBN(2)
-             END-IF.
-                MOVE S010-DATE TO JF020-JUCHU-DATE
+                MOVE 1 TO JF020-ERR-KBN OF ITF-REC(2)
+             END-IF
+
+             MOVE S010-DATE TO JF020-JUCHU-DATE OF ITF-REC 
              CALL "KCBS10" USING KCBS010-P1
+
              IF S010-RCD NOT = "E"
-                MOVE S010-P1-Y1 TO JF020-JUCHU-DATE
+                MOVE S010-P1-Y1 TO JF020-JUCHU-DATE OF ITF-REC
              ELSE
-                MOVE 1 TO JF020-ERR-KBN(3)
-             END-IF.
-             IF JF020-SHOHIN-NO IS NUMERIC AND JF020-SHOHIN-NO NOT = ZERO
+                MOVE 1 TO JF020-ERR-KBN OF ITF-REC(3)
+             END-IF
+
+             IF JF020-SHOHIN-NO OF ITF-REC IS NUMERIC 
+                AND JF020-SHOHIN-NO OF ITF-REC NOT = 0
                 CONTINUE
              ELSE
-                MOVE 1 TO JF020-ERR-KBN(5)
-             END-IF.
-             IF JF020-SURYO IS NUMERIC AND 
-                (JF020-SURYO >=1 AND JF020-SURYO <=999)
-             CONTINUE
+                MOVE 1 TO JF020-ERR-KBN OF ITF-REC(5)
+             END-IF
+
+             IF JF020-SURYO OF ITF-REC IS NUMERIC AND 
+                JF020-SURYO OF ITF-REC >= 1 AND 
+                JF020-SURYO OF ITF-REC <= 999
+                CONTINUE
              ELSE
-                MOVE 1 TO JF020-ERR-KBN(6)
-             END-IF.
+                MOVE 1 TO JF020-ERR-KBN OF ITF-REC(6)
+             END-IF
     
-             WRITE OTF-REC.
+             WRITE OTF-REC
              ADD 1 TO OUT-CNT
     
              READ ITF-FILE
-             AT END 
-             MOVE "Y" TO KJCF010-EOF
-             NOT AT END 
-             ADD 1 TO IN-CNT
+               AT END 
+                  MOVE "Y" TO KJCF020-EOF
+               NOT AT END 
+                  ADD 1 TO IN-CNT
              END-READ
            END-PERFORM.
            
@@ -107,3 +116,4 @@
            CLOSE ITF-FILE.
            CLOSE OTF-FILE.
            STOP RUN.
+           
