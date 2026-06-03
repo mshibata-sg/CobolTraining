@@ -5,7 +5,7 @@
       * システム名　　：研修(ID:K)
       * サブシステム名：受注(ID:JK)
       * プログラム名　：受注データ形式チェック
-      * 作成日／作成者：2026/06/0　[柴田真衣]
+      * 作成日／作成者：2026/06/03　[柴田真衣]
       * 変更日／変更者：
       * 　　　変更内容：
       ******************************************************************
@@ -69,16 +69,17 @@
              ELSE
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(2)
              END-IF
-
+      *
              MOVE S010-DATE TO JF020-JUCHU-DATE OF ITF-REC 
-             CALL "KCBS10" USING KCBS010-P1
+             CALL "KCBS010" USING KCBS010-P1
 
-             IF S010-RCD NOT = "E"
-                MOVE S010-P1-Y1 TO JF020-JUCHU-DATE OF ITF-REC
+             IF S010-RCD NOT ="E"
+               MOVE S010-P1-Y1 TO JF020-JUCHU-DATE OF ITF-REC
+               CONTINUE
              ELSE
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(3)
              END-IF
-
+      *
              IF JF020-SHOHIN-NO OF ITF-REC IS NUMERIC 
                 AND JF020-SHOHIN-NO OF ITF-REC NOT = 0
                 CONTINUE
@@ -94,6 +95,8 @@
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(6)
              END-IF
     
+             MOVE ITF-REC TO OTF-REC
+
              WRITE OTF-REC
              ADD 1 TO OUT-CNT
     
