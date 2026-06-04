@@ -24,7 +24,7 @@
        FILE SECTION.
        FD  ITF-FILE.
        01  ITF-REC.
-              COPY KJCF020.
+           COPY KJCF020.
 
        FD  OTF-FILE.
        01  OTF-REC.
@@ -56,8 +56,8 @@
            PERFORM UNTIL KJCF020-EOF = "Y"
              MOVE SPACES TO JF020-ERR-KBN-TBL OF ITF-REC
     
-             IF (JF020-DATA-KBN OF ITF-REC = 1) OR 
-                (JF020-DATA-KBN OF ITF-REC = 9)
+             IF (JF020-DATA-KBN OF ITF-REC = "1") OR 
+                (JF020-DATA-KBN OF ITF-REC = "9")
                 CONTINUE
              ELSE
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(1)
@@ -70,11 +70,11 @@
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(2)
              END-IF
       *
-             MOVE S010-DATE TO JF020-JUCHU-DATE OF ITF-REC 
+             MOVE JF020-JUCHU-DATE OF ITF-REC TO S010-DATE
              CALL "KCBS010" USING KCBS010-P1
 
              IF S010-RCD NOT ="E"
-               MOVE S010-P1-Y1 TO JF020-JUCHU-DATE OF ITF-REC
+              MOVE S010-DATE8 TO JF020-JUCHU-DATE OF ITF-REC 
                CONTINUE
              ELSE
                 MOVE 1 TO JF020-ERR-KBN OF ITF-REC(3)
