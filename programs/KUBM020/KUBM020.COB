@@ -56,7 +56,7 @@
            DISPLAY "*** KUBM020 START ***".
 
            MOVE LOW-VALUES TO WK-KEY.
-           
+
       * 1件読む    
            PERFORM  READ-RTN.
 
@@ -79,34 +79,33 @@
            END-IF
 
       *初期化
-           MOVE SPACES TO OTF-REC
-           MOVE ZERO TO UF020-KINGAKU
+              MOVE SPACES TO OTF-REC
+              MOVE ZERO TO UF020-KINGAKU
            
 
       *キー保存 (比較)
-           MOVE UF010-SHOHIN-NO OF ITF-REC TO WK-SHOHIN-NO
-           MOVE UF010-JUCHU-YY OF ITF-REC TO WK-JUCHU-YY
-           MOVE UF010-JUCHU-MM OF ITF-REC TO WK-JUCHU-MM
+              MOVE UF010-SHOHIN-NO TO WK-SHOHIN-NO
+              MOVE UF010-JUCHU-YY TO WK-JUCHU-YY
+              MOVE UF010-JUCHU-MM TO WK-JUCHU-MM
            
       *先頭レコード項目セット
       *(キーが変わったときに、出力レコードに正しい値をセットする)
-           MOVE UF010-SHOHIN-NO OF ITF-REC TO UF020-SHOHIN-NO
-           MOVE UF010-JUCHU-YY OF ITF-REC TO UF020-JUCHU-YY
-           MOVE UF010-JUCHU-MM OF ITF-REC TO UF020-JUCHU-MM
-           END-IF
+              MOVE UF010-SHOHIN-NO TO UF020-SHOHIN-NO
+              MOVE UF010-JUCHU-YY TO UF020-JUCHU-YY
+              MOVE UF010-JUCHU-MM TO UF020-JUCHU-MM
+           END-IF.
 
       *金額集計
            IF UF010-DATA-KBN = "1"
-              ADD UF010-KINGAKU OF ITF-REC TO UF020-KINGAKU OF OTF-REC	
+              ADD UF010-KINGAKU TO UF020-KINGAKU 
            ELSE 
               IF UF010-DATA-KBN = "9"
-                 SUBTRACT UF010-KINGAKU OF ITF-REC FROM
-                          UF020-KINGAKU OF OTF-REC
+                 SUBTRACT UF010-KINGAKU FROM UF020-KINGAKU 
               END-IF
-           END-IF
+           END-IF.
 
       *次レコード読む
-           PERFORM  READ-RTN
+           PERFORM  READ-RTN.
 
       *最終出力
            IF KUBM020-EOF = "Y"
