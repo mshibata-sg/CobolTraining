@@ -35,9 +35,11 @@
        01  OUT-CNT             PIC 9(9) VALUE 0.
 
        01  WK-KEY.
-       05  WK-SHOHIN-NO     PIC 9(5).
-       05  WK-JUCHU-YY      PIC 9(4).
-       05  WK-JUCHU-MM      PIC 9(2).
+           05  WK-SHOHIN-NO     PIC X(5).
+           05  WK-JUCHU-YY      PIC 9(4).
+           05  WK-JUCHU-MM      PIC 9(2).
+
+       01  WK-KEY-X REDEFINES  WK-KEY PIC X(11).
 
        PROCEDURE DIVISION.
            PERFORM  INIT-RTN.
@@ -53,10 +55,12 @@
 
            DISPLAY "*** KUBM020 START ***".
 
+           MOVE LOW-VALUES TO WK-KEY.
+           
       * 1件読む    
            PERFORM  READ-RTN.
 
-       INIT-EXT.    
+       EXT.    
            EXIT.
       ******************************************************************
       * 主処理
@@ -65,19 +69,19 @@
 
       *判定(商品＋年月 )  
            IF WK-SHOHIN-NO = LOW-VALUES
-              OR (UF010-SHOHIN-NO IS NOT = WK-SHOHIN-NO
-              OR UF010-JUCHU-YY IS NOT = WK-JUCHU-YY
-              OR UF010-JUCHU-MM IS NOT = WK-JUCHU-MM)
+              OR (UF010-SHOHIN-NO IS NOT EQUAL TO WK-SHOHIN-NO
+              OR UF010-JUCHU-YY IS NOT EQUAL TO WK-JUCHU-YY
+              OR UF010-JUCHU-MM IS NOT EQUAL TO WK-JUCHU-MM)
 
       *前データ出力    
-           IF WK-SHOHIN-NO IS NOT ZERO
+           IF WK-SHOHIN-NO IS NOT  EQUAL TO LOW-VALUES
               PERFORM  WRITE-RTN
            END-IF
 
       *初期化
            MOVE SPACES TO OTF-REC
            MOVE ZERO TO UF020-KINGAKU
-           END-IF
+           
 
       *キー保存 (比較)
            MOVE UF010-SHOHIN-NO OF ITF-REC TO WK-SHOHIN-NO
@@ -89,16 +93,16 @@
            MOVE UF010-SHOHIN-NO OF ITF-REC TO UF020-SHOHIN-NO
            MOVE UF010-JUCHU-YY OF ITF-REC TO UF020-JUCHU-YY
            MOVE UF010-JUCHU-MM OF ITF-REC TO UF020-JUCHU-MM
+           END-IF
 
       *金額集計
-           IF  UF010-DATA-KBN = "1"
-              ADD UF010-KINGAKU OF ITF-REC TO 
-                  UF020-KINGAKU OF OTF-REC	
+           IF UF010-DATA-KBN = "1"
+              ADD UF010-KINGAKU OF ITF-REC TO UF020-KINGAKU OF OTF-REC	
            ELSE 
-           IF UF010-DATA-KBN = "9"
-               SUBTRACT UF010-KINGAKU OF ITF-REC FROM 
-                        UF020-KINGAKU OF OTF-REC
-               END-IF
+              IF UF010-DATA-KBN = "9"
+                 SUBTRACT UF010-KINGAKU OF ITF-REC FROM
+                          UF020-KINGAKU OF OTF-REC
+              END-IF
            END-IF
 
       *次レコード読む
@@ -107,8 +111,9 @@
       *最終出力
            IF KUBM020-EOF = "Y"
               PERFORM WRITE-RTN
-           END-IF
-
+           END-IF.
+       
+       EXT.
            EXIT.    
       ******************************************************************
       * 終了処理
@@ -121,7 +126,7 @@
            CLOSE ITF-FILE.
            CLOSE OTF-FILE.
 
-       TERM-EXT.
+       EXT.
            EXIT.
       ******************************************************************
       * １レコード読込み処理
@@ -134,16 +139,17 @@
                ADD 1 TO IN-CNT
            END-READ.
 
-       READ-EXT.
+       EXT.
            EXIT.
       ******************************************************************
       * １レコード書き込み処理
       ******************************************************************  
        WRITE-RTN SECTION.
-           IF WK-SHOHIN-NO IS NOT ZERO
+           IF WK-SHOHIN-NO IS NOT EQUAL TO LOW-VALUES
               WRITE OTF-REC
               ADD 1 TO OUT-CNT
-           END-IF
+           END-IF.
 
+       EXT.
            EXIT.
              
