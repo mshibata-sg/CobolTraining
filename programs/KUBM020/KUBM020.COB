@@ -35,11 +35,10 @@
        01  OUT-CNT             PIC 9(9) VALUE 0.
 
        01  WK-KEY.
-           05  WK-SHOHIN-NO     PIC X(5).
+           05  WK-SHOHIN-NO     PIC 9(5).
            05  WK-JUCHU-YY      PIC 9(4).
            05  WK-JUCHU-MM      PIC 9(2).
 
-       01  WK-KEY-X REDEFINES  WK-KEY PIC X(11).
 
        PROCEDURE DIVISION.
            PERFORM  INIT-RTN.
@@ -144,10 +143,8 @@
       * ÇPÉåÉRÅ[ÉhèëÇ´çûÇ›èàóù
       ******************************************************************  
        WRITE-RTN SECTION.
-           IF WK-SHOHIN-NO IS NOT EQUAL TO LOW-VALUES
               WRITE OTF-REC
-              ADD 1 TO OUT-CNT
-           END-IF.
+              ADD 1 TO OUT-CNT.
 
        EXT.
            EXIT.
