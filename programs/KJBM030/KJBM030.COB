@@ -101,12 +101,10 @@
 
        REMAIN-RTN SECTION.
            PERFORM UNTIL WK-ITF-EOF = "Y"
-                IF JF020-ERR-KBN OF ITF-REC (5) = SPACE
-                   MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
-                END-IF
-                MOVE ITF-REC TO OTF-REC
-                PERFORM WRITE-RTN
-                PERFORM READ-ITF-RTN
+               MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
+               MOVE ITF-REC TO OTF-REC
+               PERFORM WRITE-RTN
+               PERFORM READ-ITF-RTN
            END-PERFORM.
        EXT.
            EXIT.
@@ -155,13 +153,6 @@
       ****************************************************************** 
        WRITE-RTN SECTION.  
            MOVE ITF-REC TO OTF-REC.
-           MOVE JF020-SHOHIN-MEI OF ITF-REC TO 
-                JF020-SHOHIN-MEI OF OTF-REC.
-           MOVE JF020-TANKA OF ITF-REC TO
-                JF020-TANKA OF OTF-REC.
-           MOVE JF020-KINGAKU OF ITF-REC TO
-                JF020-KINGAKU OF OTF-REC.
-       
            WRITE OTF-REC.
            ADD 1 TO OUT-CNT.
        EXT.
