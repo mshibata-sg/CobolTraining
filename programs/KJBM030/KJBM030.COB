@@ -43,8 +43,7 @@
 
        PROCEDURE DIVISION.
            PERFORM INIT-RTN.
-           PERFORM MATCH-RTN UNTIL WK-ITF-EOF = "Y" OR 
-                                   WK-IMF-EOF ="Y".
+           PERFORM MATCH-RTN UNTIL WK-ITF-EOF = "Y" OR WK-IMF-EOF ="Y".
            PERFORM REMAIN-RTN.
            PERFORM TERM-RTN.
            STOP RUN.
@@ -73,31 +72,28 @@
                EVALUATE TRUE
       *マッチ
                  WHEN JF020-SHOHIN-NO OF ITF-REC = CFSHO-SHOHIN-NO
-                      MOVE CFSHO-SHOHIN-MEI TO JF020-SHOHIN-MEI OF 
-                      ITF-REC
-                      MOVE CFSHO-TANKA TO JF020-TANKA OF ITF-REC
-
+                    MOVE CFSHO-SHOHIN-MEI TO JF020-SHOHIN-MEI OF ITF-REC
+                    MOVE CFSHO-TANKA TO JF020-TANKA OF ITF-REC
       *金額
                  IF JF020-ERR-KBN OF ITF-REC (6) = SPACE
                     COMPUTE JF020-KINGAKU OF ITF-REC =
-                    JF020-SURYO OF ITF-REC * CFSHO-TANKA
+                      JF020-SURYO OF ITF-REC * CFSHO-TANKA
                  ELSE
-                     MOVE ZERO TO JF020-KINGAKU OF ITF-REC
+                    MOVE ZERO TO JF020-KINGAKU OF ITF-REC
                  END-IF
 
-                     PERFORM WRITE-RTN
-                     PERFORM READ-ITF-RTN
+                 PERFORM WRITE-RTN
+                 PERFORM READ-ITF-RTN
 
       *不一致
                  WHEN JF020-SHOHIN-NO OF ITF-REC < CFSHO-SHOHIN-NO
-                      MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
-                      PERFORM WRITE-RTN
-                      PERFORM READ-ITF-RTN
+                   MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
+                   PERFORM WRITE-RTN
+                   PERFORM READ-ITF-RTN
 
       *ITF ＞ IMF
                  WHEN JF020-SHOHIN-NO OF ITF-REC > CFSHO-SHOHIN-NO
-                      PERFORM READ-IMF-RTN
-
+                   PERFORM READ-IMF-RTN
                END-EVALUATE
            END-IF.
        EXT.
@@ -105,9 +101,12 @@
 
        REMAIN-RTN SECTION.
            PERFORM UNTIL WK-ITF-EOF = "Y"
-               MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
-               PERFORM WRITE-RTN
-               PERFORM READ-ITF-RTN
+                IF JF020-ERR-KBN OF ITF-REC (5) = SPACE
+                   MOVE "2" TO JF020-ERR-KBN OF ITF-REC (5)
+                END-IF
+                MOVE ITF-REC TO OTF-REC
+                PERFORM WRITE-RTN
+                PERFORM READ-ITF-RTN
            END-PERFORM.
        EXT.
            EXIT.
@@ -155,14 +154,16 @@
       * 1レコード書き込み
       ****************************************************************** 
        WRITE-RTN SECTION.  
+           MOVE ITF-REC TO OTF-REC.
            MOVE JF020-SHOHIN-MEI OF ITF-REC TO 
                 JF020-SHOHIN-MEI OF OTF-REC.
            MOVE JF020-TANKA OF ITF-REC TO
                 JF020-TANKA OF OTF-REC.
            MOVE JF020-KINGAKU OF ITF-REC TO
                 JF020-KINGAKU OF OTF-REC.
-               WRITE OTF-REC.
-               ADD 1 TO OUT-CNT.
+       
+           WRITE OTF-REC.
+           ADD 1 TO OUT-CNT.
        EXT.
            EXIT.
        
