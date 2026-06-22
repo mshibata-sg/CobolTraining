@@ -5,7 +5,7 @@
       * システム名　　：研修(ID:K)
       * サブシステム名：受注(ID:JK)
       * プログラム名　：受注チェックファイル作成
-      * 作成日／作成者：2026/06/19　[柴田真衣]
+      * 作成日／作成者：2026/06/22　[柴田真衣]
       * 変更日／変更者：
       * 　　　変更内容：
       ******************************************************************
@@ -46,6 +46,7 @@
            "dbname=mydb user=user01 password=pass123 "
            "host=localhost port=5432 "
            "CONNSETTINGS=SET CLIENT_ENCODING TO 'SJIS'"
+           DELIMITED BY SIZE
            INTO WS-CONNSTR
            END-STRING.
            EXEC SQL
@@ -53,7 +54,7 @@
            END-EXEC.
            
       *エラーチェック
-           IF SQLCODE NOT < 0
+           IF SQLCODE < 0
                PERFORM ERROR-RTN
            END-IF.
 
@@ -88,7 +89,12 @@
                PERFORM ERROR-RTN
            END-IF.
 
-           PERFORM FETCH-SEC.
+           PERFORM FETCH-SEC
+           
+           IF SQLCODE < 0
+           PERFORM ERROR-RTN
+           END-IF.
+
        EXT.
            EXIT.
       ******************************************************************
@@ -102,12 +108,12 @@
       *エラーチェック
                IF SQLCODE < 0
                    PERFORM ERROR-RTN
-               END-IF
+               END-IF.
 
       *初期化
                MOVE SPACE TO OTF-REC
 
-      *英数字項目として転送            
+      *英数字項目として転送(処理)            
                MOVE CMJUCHU-DATA-KBN TO JF020-DATA-KBN
                MOVE CMJUCHU-JUCHU-NO TO JF020-JUCHU-NO-X
                MOVE ZERO TO JF020-JUCHU-Y1 
@@ -139,8 +145,8 @@
       *DB切断
            EXEC SQL DISCONNECT ALL END-EXEC.
              
-           DISPLAY "OTF-CNT:" WK-COUNT
-           DISPLAY "*** KJBM011 END ***"
+           DISPLAY "OTF-CNT:" WK-COUNT.
+           DISPLAY "*** KJBM011 END ***".
            
            CLOSE OTF-FILE.
            
