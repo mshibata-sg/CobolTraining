@@ -41,17 +41,19 @@
        EXEC SQL INCLUDE SQLCA END-EXEC.
 
        PROCEDURE DIVISION.
-      *データベースに接続       
-           MOVE "dbname=mydb user=user01 password=pass123 "
-                "host=localhost port=5432 "
-                "CONNSETTINGS=SET CLIENT_ENCODING TO 'SJIS'"
-                TO WS-CONNSTR.
+      *データベースに接続               
+           STRING
+           "dbname=mydb user=user01 password=pass123 "
+           "host=localhost port=5432 "
+           "CONNSETTINGS=SET CLIENT_ENCODING TO 'SJIS'"
+           INTO WS-CONNSTR
+           END-STRING.
            EXEC SQL
                CONNECT TO :WS-CONNSTR
            END-EXEC.
            
-      *データあり
-           IF SQLCODE < 0
+      *エラーチェック
+           IF SQLCODE NOT < 0
                PERFORM ERROR-RTN
            END-IF.
 
@@ -77,7 +79,7 @@
                    CMJUCHU_JUCHU_DATE,
                    CMJUCHU_SHOHIN_NO,
                    CMJUCHU_SURYO
-              FROM KCCMJUCHU
+               FROM KCCMJUCHU
            END-EXEC.
 
       *カーソルOPEN
@@ -97,10 +99,10 @@
       *SQLCODE=100（データなし）になるまでループ
            PERFORM UNTIL SQLCODE = 100
 
-      *データなし
+      *エラーチェック
                IF SQLCODE < 0
                    PERFORM ERROR-RTN
-               END-IF.
+               END-IF
 
       *初期化
                MOVE SPACE TO OTF-REC
@@ -121,7 +123,7 @@
                WRITE OTF-REC
                ADD 1 TO WK-COUNT
            
-               PERFORM FETCH-SEC.
+               PERFORM FETCH-SEC
 
            END-PERFORM.
 
