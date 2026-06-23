@@ -26,7 +26,7 @@
 
        WORKING-STORAGE SECTION.
 
-       01 WK-COUNT PIC 9(6) VALUE 0.
+       01  WK-COUNT PIC 9(6) VALUE 0.
 
        EXEC SQL BEGIN DECLARE SECTION END-EXEC.
        01  WS-CONNSTR PIC X(200).
@@ -42,13 +42,18 @@
 
        PROCEDURE DIVISION.
       *データベースに接続               
-           STRING
-           "dbname=mydb user=user01 password=pass123 "
-           "host=localhost port=5432 "
-           "CONNSETTINGS=SET CLIENT_ENCODING TO 'SJIS'"
-           DELIMITED BY SIZE
-           INTO WS-CONNSTR
+           STRING               
+               "DRIVER={PostgreSQL Unicode};"
+               "SERVER=db;"
+               "PORT=5432;"
+               "DATABASE=postgres;"
+               "UID=postgres;"
+               "PWD=postgres;"
+               "CONNSETTINGS=SET CLIENT_ENCODING TO SJIS"
+               DELIMITED BY SIZE
+               INTO  WS-CONNSTR
            END-STRING.
+
            EXEC SQL
                CONNECT TO :WS-CONNSTR
            END-EXEC.
@@ -71,7 +76,7 @@
 
            OPEN OUTPUT OTF-FILE.
 
-       *カーソル宣言 
+      *カーソル宣言 
            EXEC SQL
                DECLARE CUR-JUCHU CURSOR FOR
                SELECT     
@@ -108,7 +113,7 @@
       *エラーチェック
                IF SQLCODE < 0
                    PERFORM ERROR-RTN
-               END-IF.
+               END-IF
 
       *初期化
                MOVE SPACE TO OTF-REC
@@ -120,7 +125,7 @@
                MOVE CMJUCHU-JUCHU-DATE TO JF020-JUCHU-DATE6
                MOVE CMJUCHU-SHOHIN-NO TO JF020-SHOHIN-NO
                MOVE CMJUCHU-SURYO TO JF020-SURYO-X
-               MOVE SPACE TO JF020-ERROR-KBN
+               MOVE SPACE TO JF020-ERR-KBN-TBL
                MOVE SPACE TO JF020-SHOHIN-MEI
                MOVE ZERO TO JF020-TANKA
                MOVE ZERO TO JF020-KINGAKU
@@ -157,7 +162,7 @@
       ******************************************************************  
        ERROR-RTN SECTION.
            DISPLAY "SQL ERROR :" SQLCODE.
-           DISPLAY "MESSAGE   :" SQLERRMC.
+           DISPLAY "MESSAGE :" SQLERRMC.
            MOVE 9 TO RETURN-CODE.
            STOP RUN.
        EXT.
