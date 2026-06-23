@@ -30,17 +30,21 @@
 
        EXEC SQL BEGIN DECLARE SECTION END-EXEC.
        01  WS-CONNSTR PIC X(200).
-       01  CMJUCHU-DATA-KBN   PIC 9(1).
-       01  CMJUCHU-JUCHU-NO   PIC 9(4).
-       01  CMJUCHU-JUCHU-DATE PIC X(6).
-       01  CMJUCHU-SHOHIN-NO  PIC X(5).
-       01  CMJUCHU-SURYO      PIC 9(5).
+       01  CMJUCHU-REC.
+           COPY KCCMJUCHU.
        EXEC SQL END DECLARE SECTION END-EXEC.
-           
+
+       PROCEDURE DIVISION.
+      ******************************************************************
+      * 初期処理
+      ******************************************************************
+       INIT-RTN  SECTION.
+
+           DISPLAY "*** KJBM011 START ***".
+
       *SQLの結果を受け取る
        EXEC SQL INCLUDE SQLCA END-EXEC.
 
-       PROCEDURE DIVISION.
       *データベースに接続               
            STRING               
                "DRIVER={PostgreSQL Unicode};"
@@ -64,15 +68,9 @@
            END-IF.
 
            PERFORM INIT-RTN.
-           PERFORM MAIN-RTN.
+           PERFORM MAIN-RTN UNTIL SQLCODE = 100
            PERFORM TERM-RTN.
            STOP RUN.
-
-      ******************************************************************
-      * 初期処理
-      ******************************************************************
-       INIT-RTN  SECTION.
-           DISPLAY "*** KJBM011 START ***".
 
            OPEN OUTPUT OTF-FILE.
 
@@ -106,9 +104,6 @@
       * 主処理
       ******************************************************************
        MAIN-RTN  SECTION.
-
-      *SQLCODE=100（データなし）になるまでループ
-           PERFORM UNTIL SQLCODE = 100
 
       *エラーチェック
                IF SQLCODE < 0
