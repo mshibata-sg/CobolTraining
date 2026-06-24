@@ -30,20 +30,24 @@
 
        EXEC SQL BEGIN DECLARE SECTION END-EXEC.
        01  WS-CONNSTR PIC X(200).
-       01  CMJUCHU-REC.
-           COPY KCCMJUCHU.
+       EXEC SQL INCLUDE KCCMJUCHU END-EXEC.
        EXEC SQL END DECLARE SECTION END-EXEC.
 
+      *SQLの結果を受け取る
+       EXEC SQL INCLUDE SQLCA END-EXEC.
+
        PROCEDURE DIVISION.
+           PERFORM INIT-RTN.
+           PERFORM MAIN-RTN UNTIL SQLCODE = 100
+           PERFORM TERM-RTN.
+           STOP RUN.
+
       ******************************************************************
       * 初期処理
       ******************************************************************
        INIT-RTN  SECTION.
 
            DISPLAY "*** KJBM011 START ***".
-
-      *SQLの結果を受け取る
-       EXEC SQL INCLUDE SQLCA END-EXEC.
 
       *データベースに接続               
            STRING               
@@ -66,11 +70,6 @@
            IF SQLCODE < 0
                PERFORM ERROR-RTN
            END-IF.
-
-           PERFORM INIT-RTN.
-           PERFORM MAIN-RTN UNTIL SQLCODE = 100
-           PERFORM TERM-RTN.
-           STOP RUN.
 
            OPEN OUTPUT OTF-FILE.
 
@@ -129,9 +128,7 @@
                WRITE OTF-REC
                ADD 1 TO WK-COUNT
            
-               PERFORM FETCH-SEC
-
-           END-PERFORM.
+               PERFORM FETCH-SEC.
 
        EXT.
            EXIT.
