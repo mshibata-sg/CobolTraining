@@ -101,25 +101,25 @@
        MAIN-RTN  SECTION.
 
       *èâä˙âª
-               MOVE SPACE TO OTF-REC.
+           MOVE SPACE TO OTF-REC.
 
       *âpêîéöçÄñ⁄Ç∆ÇµÇƒì]ëó(èàóù)            
-               MOVE CMJUCHU-DATA-KBN TO JF020-DATA-KBN
-               MOVE CMJUCHU-JUCHU-NO TO JF020-JUCHU-NO-X
-               MOVE ZERO TO JF020-JUCHU-Y1 
-               MOVE CMJUCHU-JUCHU-DATE TO JF020-JUCHU-DATE6
-               MOVE CMJUCHU-SHOHIN-NO TO JF020-SHOHIN-NO
-               MOVE CMJUCHU-SURYO TO JF020-SURYO-X
-               MOVE SPACE TO JF020-ERR-KBN-TBL
-               MOVE SPACE TO JF020-SHOHIN-MEI
-               MOVE ZERO TO JF020-TANKA
-               MOVE ZERO TO JF020-KINGAKU
+           MOVE CMJUCHU-DATA-KBN TO JF020-DATA-KBN
+           MOVE CMJUCHU-JUCHU-NO TO JF020-JUCHU-NO-X
+           MOVE ZERO TO JF020-JUCHU-Y1 
+           MOVE CMJUCHU-JUCHU-DATE TO JF020-JUCHU-DATE6
+           MOVE CMJUCHU-SHOHIN-NO TO JF020-SHOHIN-NO
+           MOVE CMJUCHU-SURYO TO JF020-SURYO-X
+           MOVE SPACE TO JF020-ERR-KBN-TBL
+           MOVE SPACE TO JF020-SHOHIN-MEI
+           MOVE ZERO TO JF020-TANKA
+           MOVE ZERO TO JF020-KINGAKU.
 
       *èoóÕ
-               WRITE OTF-REC
-               ADD 1 TO WK-COUNT.
+           WRITE OTF-REC
+           ADD 1 TO WK-COUNT.
            
-               PERFORM FETCH-SEC.
+           PERFORM FETCH-SEC.
 
        EXT.
            EXIT.
