@@ -5,7 +5,7 @@
       * システム名　　：研修(ID:K)
       * サブシステム名：受注(ID:JK)
       * プログラム名　：受注チェックファイル作成
-      * 作成日／作成者：2026/06/22　[柴田真衣]
+      * 作成日／作成者：2026/06/23　[柴田真衣]
       * 変更日／変更者：
       * 　　　変更内容：
       ******************************************************************
@@ -49,6 +49,8 @@
 
            DISPLAY "*** KJBM011 START ***".
 
+           OPEN OUTPUT OTF-FILE.
+
       *データベースに接続               
            STRING               
                "DRIVER={PostgreSQL Unicode};"
@@ -70,8 +72,6 @@
            IF SQLCODE < 0
                PERFORM ERROR-RTN
            END-IF.
-
-           OPEN OUTPUT OTF-FILE.
 
       *カーソル宣言 
            EXEC SQL
