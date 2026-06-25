@@ -91,11 +91,7 @@
                PERFORM ERROR-RTN
            END-IF.
 
-           PERFORM FETCH-SEC
-           
-           IF SQLCODE < 0
-           PERFORM ERROR-RTN
-           END-IF.
+           PERFORM FETCH-SEC.
 
        EXT.
            EXIT.
@@ -104,13 +100,8 @@
       ******************************************************************
        MAIN-RTN  SECTION.
 
-      *エラーチェック
-               IF SQLCODE < 0
-                   PERFORM ERROR-RTN
-               END-IF
-
       *初期化
-               MOVE SPACE TO OTF-REC
+               MOVE SPACE TO OTF-REC.
 
       *英数字項目として転送(処理)            
                MOVE CMJUCHU-DATA-KBN TO JF020-DATA-KBN
@@ -126,7 +117,7 @@
 
       *出力
                WRITE OTF-REC
-               ADD 1 TO WK-COUNT
+               ADD 1 TO WK-COUNT.
            
                PERFORM FETCH-SEC.
 
@@ -171,6 +162,10 @@
                     :CMJUCHU-SHOHIN-NO,
                     :CMJUCHU-SURYO
            END-EXEC.
+           
+           IF SQLCODE < 0
+               PERFORM ERROR-RTN
+           END-IF.
         
        EXT.
            EXIT.
