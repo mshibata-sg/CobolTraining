@@ -91,7 +91,7 @@
                PERFORM ERROR-RTN
            END-IF.
 
-           PERFORM FETCH-SEC.
+           PERFORM FETCH-RTN.
 
        EXT.
            EXIT.
@@ -119,7 +119,7 @@
            WRITE OTF-REC
            ADD 1 TO WK-COUNT.
            
-           PERFORM FETCH-SEC.
+           PERFORM FETCH-RTN.
 
        EXT.
            EXIT.
@@ -153,7 +153,7 @@
       ******************************************************************
       * 1çséÊìæ
       ****************************************************************** 
-       FETCH-SEC SECTION. 
+       FETCH-RTN SECTION. 
            EXEC SQL
                FETCH CUR-JUCHU
                INTO :CMJUCHU-DATA-KBN,
