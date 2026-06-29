@@ -1,0 +1,5 @@
+postgres=# SELECT * FROM "KCCMJUCHU";
+ cmjuchu_data_kbn | cmjuchu_juchu_no | cmjuchu_juchu_date | cmjuchu_shohin_no | cmjuchu_suryo 
+------------------+------------------+--------------------+-------------------+---------------
+                9 |             9999 | 999999             | MAX05             |         99999
+(1 row)
