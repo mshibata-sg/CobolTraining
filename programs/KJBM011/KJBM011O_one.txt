@@ -1,0 +1,4 @@
+ cmjuchu_data_kbn | cmjuchu_juchu_no | cmjuchu_juchu_date | cmjuchu_shohin_no | cmjuchu_suryo 
+------------------+------------------+--------------------+-------------------+---------------
+                1 |             3001 | 202406             | SH005             |            12
+(1 row)
