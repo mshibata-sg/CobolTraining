@@ -1,5 +1,9 @@
-postgres=# SELECT * FROM "KCCMJUCHU";
  cmjuchu_data_kbn | cmjuchu_juchu_no | cmjuchu_juchu_date | cmjuchu_shohin_no | cmjuchu_suryo 
 ------------------+------------------+--------------------+-------------------+---------------
                 9 |             9999 | 999999             | MAX05             |         99999
-(1 row)
+                1 |             1001 | 202406             | SH001             |            10
+                1 |             1002 | 202406             | SH002             |             5
+                2 |             1003 | 202405             | SH003             |            20
+                2 |             1004 | 202404             | SH004             |            15
+                1 |             2001 |                    |                   |             0
+(6 rows)
